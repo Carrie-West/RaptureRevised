@@ -66,8 +66,10 @@ public class Main {
 		}
 		try{
 			conn = DriverManager.getConnection(url);
-			PreparedStatement init_table = conn.prepareStatement("CREATE TABLE Events(\n" +
+			PreparedStatement init_table = conn.prepareStatement("CREATE TABLE Events (" +
 					"    id int primary key,\n" +
+					"  	 category VARCHAR,\n" +
+					"	 event_type VARCHAR, \n"+
 					"    chance int,\n" +
 					"    event_text VARCHAR,\n" +
 					"    value_modified VARCHAR,\n" +
@@ -76,17 +78,11 @@ public class Main {
 					")");
 			init_table.executeUpdate();
 
-			PreparedStatement loadData = conn.prepareStatement("INSERT INTO Events SELECT * FROM CSVREAD('EventList') ");
+			PreparedStatement loadData = conn.prepareStatement("INSERT INTO Events SELECT * FROM CSVREAD('EventList')");
 
 			loadData.executeUpdate();
 
-			PreparedStatement test = conn.prepareStatement("SELECT * FROM Events WHERE id = 200");
 
-			ResultSet rs = test.executeQuery();
-
-			StatEvent statTest = new StatEvent(rs);
-
-			System.out.println(statTest.getEventText());
 
 
 			System.out.println("Intialized");

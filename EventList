@@ -1,3 +1,3 @@
-id, chance, event_text, value_modified, addOrRemove, stat_modifier
-100, 50, 'You feel energized. +1 Agility!', agility, FALSE, 1
-200, 50, 'Could always go for some light reading.', Magazine, TRUE, 0
+id, category,event_type,chance, event_text, value_modified, addOrRemove, stat_modifier
+100,general,stat,50,'You feel energized. +1 Agility!',agility,FALSE,1
+101,seat,item,50,'Could always go for some light reading.',Magazine,TRUE,0

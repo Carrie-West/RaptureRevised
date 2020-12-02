@@ -1,10 +1,13 @@
 package characters;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 
-
+import events.Event;
+import events.ItemEvent;
+import events.StatEvent;
 import items.ITEM;
 import rooms.ROOM;
 
@@ -92,19 +95,21 @@ public class Player extends CharacterBase {
 	}
 
 	public void randomEvent(){
-		int eventThreshold = 80;
+		int eventThreshold = 40;
 		Random roll = new Random();
 		int chance = (roll.nextInt(100) + 10*(this.luck));	//each level of luck = 10% chance added
 		if(chance >= eventThreshold) {
+			Event event;
 			switch (this.location.getName()) {
 
 				case ("Seat"):
+					event = eventRandomizer("seat", chance);
+					event.triggerEvent(this);
+
 					break;
 				case ("Bathroom"):
-					if (!checkParty("Holly")) {
-
-					}
-					break;
+					event = eventRandomizer("bathroom", chance);
+					event.triggerEvent(this);
 
 			}
 		}
@@ -118,6 +123,35 @@ public class Player extends CharacterBase {
 			}
 		}
 		return false;
+	}
+
+	public Event eventRandomizer(String eventType, int eventRoll){
+		try {
+			Connection conn;
+			String url = "jdbc:h2:mem:EventDatabase";
+			conn = DriverManager.getConnection(url);
+			PreparedStatement query = conn.prepareStatement("SELECT * FROM Events WHERE category = ? AND chance < ? ORDER BY RANDOM() LIMIT 1");
+			query.setString(1, eventType);
+			query.setInt(2, eventRoll);
+			ResultSet rs = query.executeQuery();
+			while (rs.next()){
+				if (rs.getString(2).equals("stat")){
+					StatEvent event = new StatEvent(rs);
+					return event;
+				}else if(rs.getString(2).equals("item")){
+					ItemEvent event =  new ItemEvent(rs);
+					return event;
+				}
+
+			}
+
+
+
+
+		}catch (SQLException sq){
+			sq.printStackTrace();
+		}
+		return null;
 	}
 	
 	
