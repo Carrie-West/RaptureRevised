@@ -5,6 +5,7 @@ import items.ITEM;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class StatEvent extends Event {
     String stat;
@@ -14,19 +15,20 @@ public class StatEvent extends Event {
         this.stat = stat;
         this.modifier = modifier;
     }
-    public StatEvent(ResultSet rs) throws SQLException {
-        while(rs.next()) {
-            this.chance = rs.getInt("chance");
-            this.eventText = rs.getString("event_text");
-            this.stat = rs.getString("value_modified");
-            this.modifier = rs.getInt("stat_modifier");
-        }
+    public StatEvent(ArrayList<String> rs){
+        this.chance = Integer.parseInt(rs.get(3));
+        this.eventText = rs.get(4);
+        this.stat = rs.get(5);
+        this.modifier = Integer.parseInt(rs.get(7));
+    }
 
+    public String toString(){
+        return (this.stat.toString() + ", " + this.eventText + ", " + this.chance);
     }
 
     public void triggerEvent(Player player) {
         System.out.println(eventText);
-        switch (stat) {
+        switch (this.stat) {
             case ("intelligence"):
                 player.modifyIntelligence(modifier);
                 break;

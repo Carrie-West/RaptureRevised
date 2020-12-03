@@ -1,5 +1,4 @@
 import characters.*;
-import events.StatEvent;
 import items.ITEM;
 import rooms.ROOM;
 
@@ -26,11 +25,17 @@ public class Main {
 				"Wait... you DID have a seat neighbor.");
 		while(current<finish){
 			System.out.println("What do you want to do?");
+			switch(keyboard.next()){
+				case("rest"):
+					System.out.println("rest");
+			}
 			switch(player.getLocation().getName()){
 
 				case("Seat"):
-					if(!(ROOM.Seat.hasBeenHere())){
 
+					if(!(ROOM.Seat.hasBeenHere())){
+						System.out.println("Where is everyone?");
+						ROOM.Seat.toggleBeenHere();
 					}else{
 						player.randomEvent();
 					}
@@ -82,10 +87,8 @@ public class Main {
 
 			loadData.executeUpdate();
 
+			System.out.println("Initialized");
 
-
-
-			System.out.println("Intialized");
 
 
 		} catch (SQLException throwables) {
@@ -96,10 +99,10 @@ public class Main {
 
 		String name;
 		int pronounChoice;
-		ArrayList<String> Pronouns =  new ArrayList<String>();
+		ArrayList<String> Pronouns =  new ArrayList<>();
 		
-		ArrayList<ITEM> Inventory = new ArrayList<ITEM>();
-		ArrayList<NPC> Party = new ArrayList<NPC>();
+		ArrayList<ITEM> Inventory = new ArrayList<>();
+		ArrayList<NPC> Party = new ArrayList<>();
 		
 		int intelligence = 5;
 		int strength = 5;
@@ -139,6 +142,9 @@ public class Main {
 			secondPronoun = keyboard.next();
 			System.out.println("What word should people use for something you possess? (ex. his/her's/their's)");
 			thirdPronoun = keyboard.next();
+			Pronouns.add(0, firstPronoun);
+			Pronouns.add(1, secondPronoun);
+			Pronouns.add(2, thirdPronoun);
 			
 		}
 		else if (pronounChoice == 5) {
@@ -178,10 +184,8 @@ public class Main {
 				charisma++;
 
 		}
-		
-		
-		Player player = new Player(name, Pronouns, intelligence, strength, agility, charisma, luck, Inventory, Party, ROOM.Seat);
-		
-		return player;
+
+
+		return new Player(name, Pronouns, intelligence, strength, agility, charisma, luck, Inventory, Party, ROOM.Seat);
 	}
 }

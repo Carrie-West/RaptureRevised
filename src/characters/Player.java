@@ -99,17 +99,15 @@ public class Player extends CharacterBase {
 		Random roll = new Random();
 		int chance = (roll.nextInt(100) + 10*(this.luck));	//each level of luck = 10% chance added
 		if(chance >= eventThreshold) {
-			Event event;
 			switch (this.location.getName()) {
 
 				case ("Seat"):
-					event = eventRandomizer("seat", chance);
-					event.triggerEvent(this);
+					eventRandomizer("seat", chance);
 
 					break;
 				case ("Bathroom"):
-					event = eventRandomizer("bathroom", chance);
-					event.triggerEvent(this);
+					eventRandomizer("bathroom", chance);
+
 
 			}
 		}
@@ -125,7 +123,7 @@ public class Player extends CharacterBase {
 		return false;
 	}
 
-	public Event eventRandomizer(String eventType, int eventRoll){
+	public void eventRandomizer(String eventType, int eventRoll){
 		try {
 			Connection conn;
 			String url = "jdbc:h2:mem:EventDatabase";
@@ -134,24 +132,30 @@ public class Player extends CharacterBase {
 			query.setString(1, eventType);
 			query.setInt(2, eventRoll);
 			ResultSet rs = query.executeQuery();
+			ArrayList<String> results = new ArrayList<>();
+
+
 			while (rs.next()){
-				if (rs.getString(2).equals("stat")){
-					StatEvent event = new StatEvent(rs);
-					return event;
-				}else if(rs.getString(2).equals("item")){
-					ItemEvent event =  new ItemEvent(rs);
-					return event;
+				for(int i = 1; i < 9; i++){
+					results.add(rs.getString(i));
 				}
 
 			}
+			results.forEach(result -> System.out.println(result));
+			if (results.get(1).equals("stat")){
 
-
-
+				StatEvent event = new StatEvent(results);
+				event.triggerEvent(this);
+			}else if(results.get(1).equals("item")){
+				ItemEvent event =  new ItemEvent(results);
+				System.out.println(event.toString());
+				event.triggerEvent(this);
+			}
 
 		}catch (SQLException sq){
 			sq.printStackTrace();
 		}
-		return null;
+
 	}
 	
 	
